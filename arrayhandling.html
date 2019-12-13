@@ -1,0 +1,97 @@
+<html>
+<head>
+<title>Array handling</title>
+</head>
+    <body>
+        <h1>Customer data</h1>
+        <input id="company" type="text" placeholder="Company Name" />
+        <input id="name" type="text" placeholder="Customer Name" />
+        <input id="age" type="text" placeholder="Age" /></br></br>
+        <button type="button" value="Save&Show" onclick="insert()" id="insert">Save</button>
+        <button type="button" style="display:none;" id="update" value="" onclick="update()">Update</button>
+        <div id="display"></div>
+        </div>
+    </body>
+</html>
+
+<script>    
+    var customerData  = [];
+    // Inserting new customer record into local storage
+    function insert() {
+        var company  = document.getElementById("company").value;
+        var name   = document.getElementById("name").value;
+        var age = document.getElementById("age").value;
+        var obj = {company, name, age};
+        customerData.push(obj);
+        localStorage.setItem("customerString", JSON.stringify(customerData));
+        var customerDetails = JSON.parse(localStorage.getItem("customerString"));
+        company = "";
+        name ="";
+        age = "";
+        var html = "<table border='1'>";
+        customerDetails.map((values, index) => {
+            html+="<tr id='row_data'>";
+            html+="<td>"+index+"</td>";
+            html+="<td>"+values.company+"</td>";
+            html+="<td>"+values.name+"</td>";
+            html+="<td>"+values.age+"</td>";
+            html+="<td onclick='editRow(" + index + ")'>Edit</td>";
+            html+="<td onclick='deleteRow(" + index + ")'>Delete</td>";
+            html+="</tr>";
+
+         } )
+        html+="</table>";
+        document.getElementById("display").innerHTML = html;
+    }
+    
+    // Edit the customer form with record
+    function editRow(editKey) {
+        document.getElementById("update").value = editKey;
+        document.getElementById("update").style.display = "block";
+        document.getElementById("insert").style.display = "none";
+        var customerDetails = JSON.parse(localStorage.getItem("customerString"));
+        customerDetails.map((values, index) => {
+            if (index == editKey) {
+                document.getElementById("company").value = values.company;
+                document.getElementById("name").value = values.name;
+                document.getElementById("age").value = values.age;
+           }
+           localStorage.setItem('customerString', JSON.stringify(customerDetails));
+           customerDetails = JSON.parse(localStorage.getItem('customerString'));
+        })
+    }   
+    
+    // Delete the specific customer record from local storage
+    function deleteRow(deleteKey) {
+        var customerDetails = JSON.parse(localStorage.getItem("customerString"));
+        customerDetails.map((values, index) => {
+            if (index == deleteKey) {
+                customerDetails.splice(index, 1);
+           }
+        })
+        localStorage.setItem('customerString', JSON.stringify(customerDetails));
+        customerDetails = JSON.parse(localStorage.getItem('customerString'));
+    }   
+    
+    // Updating the the customer record
+    function update() {
+        var updateKey  = document.getElementById("update").value;
+        var company  = document.getElementById("company").value;
+        var name   = document.getElementById("name").value;
+        var age = document.getElementById("age").value;
+        var customerDetails = JSON.parse(localStorage.getItem("customerString"));
+        customerDetails.map((values, index) => {
+            if (index == updateKey) {
+                values.company = company;
+                values.name = name;
+                values.age = age;
+            }
+        })   
+        localStorage.setItem('customerString', JSON.stringify(customerDetails));
+        customerDetails = JSON.parse(localStorage.getItem('customerString'));
+        document.getElementById("update").style.display = "none";
+        document.getElementById("insert").style.display = "block";
+    }
+    
+</script>
+
